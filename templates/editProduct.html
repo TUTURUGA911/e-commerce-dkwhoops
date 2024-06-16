@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It SELL</title>
+    <!-- Customized Bootstrap Stylesheet -->
+
+    <link href="{{ url_for('static', filename='node_modules/bootstrap/dist/css/bootstrap.min.css') }}"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tiny-slider.css') }}" />
+    <style>
+        .shop-now {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f9bf29;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .shop-now:hover {
+            background-color: #c69720;
+        }
+
+        .shop-now-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #474747;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .shop-now-back:hover {
+            background-color: #5c5b5b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Start Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark fixed-top" aria-label="Furni navigation bar">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">It Sell<span>.</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li><a class="nav-link" href="/shop">Shop</a></li>
+                    <li><a class="nav-link" href="/about">About us</a></li>
+                    <li><a class="nav-link" href="/service">Services</a></li>
+                    <li><a class="nav-link" href="/contact">Contact us</a></li>
+                    {% if is_admin %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/manageproduct">Kelola Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/manageorder">Kelola Orders</a>
+                    </li>
+                    {% endif %}
+                    {% if logged_in %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            <i class="bi bi-cart-fill" style="font-size: 1.2rem;"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orders">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" onclick="logout()">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="search d-flex align-items-center flex-grow-1 mt-5 pb-3">
+                    <form class="d-flex justify-content-center flex-grow-1" action="/search" method="GET">
+                        <input class="form-control me-2" type="search" placeholder="Cari Produk..." aria-label="Search"
+                            name="q">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </form>
+                </div>
+                <div class="add-product p-5">
+                    <div class="row">
+                        <div class="form-input">
+                            <div class="card" style="border-radius: 1em;">
+                                <div class="text-center mt-4">
+                                    <h3 class="text-uppercase">EDIT PRODUK</h3>
+                                </div>
+                                <hr>
+                                <section class="card-body mt-3">
+                                    <div class="row">
+                                        <div class="mb-4">
+                                            <label for="product-name" class="form-label">Nama Produk</label>
+                                            <input type="text" class="form-control" id="product-name"
+                                                placeholder="Product Name" value="{{info_product.product_name}}">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product-price" class="form-label">Harga Produk</label>
+                                            <input type="number" class="form-control" id="product-price"
+                                                placeholder="Example : 10000000" value="{{info_product.product_price}}">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product-stock" class="form-label">Stock Produk</label>
+                                            <input type="number" class="form-control" id="product-stock"
+                                                placeholder="Example : 10" value="{{info_product.product_stock}}">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="link-video" class="form-label">Embed Video</label>
+                                            <input type="text" class="form-control" id="link-video"
+                                                placeholder="Embed Video" value="{{info_product.link}}">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="image" class="form-label">Image</label>
+                                            <div class="imgproduct">
+                                                <img class="img-fluid" src="/static/product_pics/{{info_product.image}}"
+                                                    alt="" style="width: 500px;">
+                                            </div>
+                                            <p>Note: Upload gambar untuk update gambar</p>
+                                            <input class="form-control form-control" id="image" type="file">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="deskripsi" class="form-label">Description</label>
+                                            <br>
+                                            <textarea class="my-textarea" id="deskripsi" rows="5" style="width: 100%;"
+                                                placeholder="Description">{{info_product.description}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button onclick="update('{{info_product._id}}')" class="shop-now" type="button"
+                                            style="width: 100%;">Edit</button>
+                                        <button onclick="window.location.href='/manageproduct'" class="shop-now-back"
+                                            type="button">Back</button>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Hero Section -->
+    <!-- Start Footer Section -->
+    <footer class="footer-section">
+        <div class="container relative">
+            <div class="row g-5 mb-5">
+                <div class="col-lg-4">
+                    <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">DKW Hoops<span>.</span></a></div>
+                    <p class="mb-4">
+                        DKW Hoops adalah sebuah toko yang mengkhususkan diri dalam jual beli sepatu basket purwokerto.
+                        DKW
+                        Shop menjadi destinasi utama bagi para penggemar basket purwokerto yang mencari sepatu
+                        berkualitas
+                    </p>
+
+                    <ul class="list-unstyled custom-social">
+                        <li><a href="#"><span class="bi bi-brands bi-facebook"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-twitter"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-instagram"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-linkedin"></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="row links-wrap">
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Services</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Support</a></li>
+                                <li><a href="#">Knowledge base</a></li>
+                                <li><a href="#">Live chat</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Jobs</a></li>
+                                <li><a href="#">Our team</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="border-top copyright">
+                <div class="row pt-4">
+                    <div class="col-lg-6">
+                        <p class="mb-2 text-center text-lg-start">Copyright &copy;
+                            <script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash;
+                        <p>DKW Hoops</p>
+                        </p>
+                    </div>
+
+                    <div class="col-lg-6 text-center text-lg-end">
+                        <ul class="list-unstyled d-inline-flex ms-auto">
+                            <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <!-- Scripts -->
+    <script>
+        function logout() {
+            $.removeCookie('mytoken');
+            alert('You have been logged out!')
+            window.location.href = '/'
+        }
+
+        function update(id_product) {
+            let product_name = $('#product-name').val()
+            let product_price = $('#product-price').val()
+            let product_stock = $('#product-stock').val()
+            let link_video = $('#link-video').val()
+            let deskripsi = $('#deskripsi').val()
+            let gambar = $("#image").prop("files")[0];
+
+            if (product_name && product_price && product_stock && link_video && deskripsi) {
+                let form_data = new FormData();
+
+                form_data.append("file_give", gambar);
+                form_data.append("name_give", product_name);
+                form_data.append("price_give", product_price);
+                form_data.append("stock_give", product_stock);
+                form_data.append("link_give", link_video);
+                form_data.append("deskripsi_give", deskripsi);
+
+                // Check if a new file is selected
+                if (gambar) {
+                    form_data.append("file_give", gambar);
+                }
+
+                $.ajax({
+                    type: "put",
+                    url: "/edit_product/" + id_product,
+                    data: form_data,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response['result'] === 'success') {
+                            alert("Success! " + response['msg']);
+                            window.location.href = '/manageproduct';
+                        }
+                    },
+                });
+            } else {
+                alert("Fill in all the data");
+                return;
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tiny-slider.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/min/tiny-slider.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+</body>
+
+</html>

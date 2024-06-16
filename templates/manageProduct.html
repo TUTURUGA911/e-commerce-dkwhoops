@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DKW Hoops</title>
+    <!-- Customized Bootstrap Stylesheet -->
+
+    <link href="{{ url_for('static', filename='node_modules/bootstrap/dist/css/bootstrap.min.css') }}"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tiny-slider.css') }}" />
+
+    <style>
+        .banner .shop-now:hover {
+            background-color: #f9bf29;
+        }
+
+        .shop-now {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f9bf29;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .shop-now:hover {
+            background-color: #a37e22;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Start Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark fixed-top" aria-label="Furni navigation bar">
+        <div class="container">
+            <a class="navbar-brand" href="/">DKW Hoops<span>.</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li><a class="nav-link" href="/shop">Shop</a></li>
+                    <li><a class="nav-link" href="/about">About us</a></li>
+                    <li><a class="nav-link" href="/service">Services</a></li>
+                    <li><a class="nav-link" href="/contact">Contact us</a></li>
+                    {% if is_admin %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/manageproduct">Kelola Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/manageorder">Kelola Orders</a>
+                    </li>
+                    {% endif %}
+                    {% if logged_in %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            <i class="bi bi-cart-fill" style="font-size: 1.2rem;"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orders">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" onclick="logout()">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Hero Section -->
+    <div class="hero">
+        <div class="container pt-5">
+            <div class="mb-5">
+                <div class="row p-5" id="manageproduct">
+                    <div class="col" id="content">
+                        <div class="d-flex mb-3">
+                            <div class="me-auto text-light p-2 mt-2">
+                                <h2>Daftar Produk</h2>
+                            </div>
+                            <div class="p-2 mt-2">
+                                <a href="/addproduct"><button type="button" class="shop-now"> Tambah Produk
+                                    </button></a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-light">Nama</th>
+                                        <th class="text-light">Harga</th>
+                                        <th class="text-light">Stock</th>
+                                        <th class="text-light">Deskrispi</th>
+                                        <th class="text-light">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in product_list | reverse %}
+                                    <tr>
+                                        <td class="text-light">{{product.product_name}}</td>
+                                        <td class="text-light">Rp{{product.product_price}}</td>
+                                        <td class="text-light">{{product.product_stock}}</td>
+                                        <td class="text-light">{{product.description | striptags | truncate(100)}}...</td>
+                                        <td><a href="/editproduct/{{product._id}}"><button class="btn" id="edit"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor" class="bi bi-pencil-fill"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                                                    </svg></button></a>
+                                            <button onclick="delete_product('{{product._id}}')" class="btn"
+                                                id="delete"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                    height="16" fill="currentColor" class="bi bi-trash-fill"
+                                                    viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg></button>
+                                        </td>
+                                        <td>
+                                            {% if not product.is_best_product %}
+                                            <button onclick="mark_as_best_product('{{product._id}}')"
+                                                class="btn btn-warning" id="best-product">
+                                                Set Best
+                                            </button>
+                                            {% else %}
+                                            <button onclick="remove_best_product('{{product._id}}')"
+                                                class="btn btn-secondary" id="remove-best-product">
+                                                Remove Best
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Hero Section -->
+
+
+    <!-- Start Footer Section -->
+    <footer class="footer-section">
+        <div class="container relative">
+            <div class="row g-5 mb-5">
+                <div class="col-lg-4">
+                    <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">DKW Hoops<span>.</span></a></div>
+                    <p class="mb-4">
+                        It Sell adalah platform jual beli khusus untuk mahasiswa ITTP yang ingin menjual barang-barang
+                        yang sudah tidak terpakai. Dari buku, alat elektronik, hingga peralatan kuliah, IT Sell membantu
+                        mahasiswa mengurangi barang yang tidak diperlukan dan mendapatkan tambahan penghasilan.
+                    </p>
+
+                    <ul class="list-unstyled custom-social">
+                        <li><a href="#"><span class="bi bi-brands bi-facebook"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-twitter"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-instagram"></span></a></li>
+                        <li><a href="#"><span class="bi bi-brands bi-linkedin"></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="row links-wrap">
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Services</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Support</a></li>
+                                <li><a href="#">Knowledge base</a></li>
+                                <li><a href="#">Live chat</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-sm-6 col-md-3">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Jobs</a></li>
+                                <li><a href="#">Our team</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top copyright">
+                <div class="row pt-4">
+                    <div class="col-lg-6">
+                        <p class="mb-2 text-center text-lg-start">Copyright &copy;
+                            <script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash;
+                            Designed with love by <a href="https://untree.co">Untree.co</a> Distributed By <a
+                                hreff="https://themewagon.com">ThemeWagon</a>
+                            <!-- License information: https://untree.co/license/ -->
+                        </p>
+                    </div>
+
+                    <div class="col-lg-6 text-center text-lg-end">
+                        <ul class="list-unstyled d-inline-flex ms-auto">
+                            <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <!-- Scripts -->
+    <script>
+        function logout() {
+            $.removeCookie('mytoken');
+            alert('You have been logged out!')
+            window.location.href = '/'
+        }
+
+        function delete_product(id_product) {
+            $.ajax({
+                type: "DELETE",
+                url: "/delete_product/" + id_product,
+                success: function (response) {
+                    if (response['result'] === 'success') {
+                        alert("Success! " + response['msg']);
+                        window.location.href = '/manageproduct';
+                    }
+                },
+            });
+        }
+
+        function mark_as_best_product(id_product) {
+            $.ajax({
+                type: "POST",
+                url: "/mark_as_best_product/" + id_product,
+                success: function (response) {
+                    if (response['result'] === 'success') {
+                        alert("Success! " + response['msg']);
+                        window.location.href = '/manageproduct';
+                    }
+                },
+            });
+        }
+
+        function remove_best_product(id_product) {
+            $.ajax({
+                type: "POST",
+                url: "/remove_best_product/" + id_product,
+                success: function (response) {
+                    if (response['result'] === 'success') {
+                        alert("Success! " + response['msg']);
+                        window.location.href = '/manageproduct';
+                    }
+                },
+            });
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tiny-slider.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/min/tiny-slider.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+</body>
+
+</html>
